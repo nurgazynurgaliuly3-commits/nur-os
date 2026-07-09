@@ -12,7 +12,10 @@ COPY scripts ./scripts
 COPY tests ./tests
 COPY supabase-schema.sql render.yaml README.md DEPLOYMENT.md PRODUCTION_CHECKLIST.md ./
 
-RUN addgroup -S nuros && adduser -S nuros -G nuros
+RUN addgroup -S nuros \
+  && adduser -S nuros -G nuros \
+  && mkdir -p .data \
+  && chown -R nuros:nuros /app
 USER nuros
 
 EXPOSE 4174
