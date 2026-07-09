@@ -1,0 +1,29 @@
+{
+  "name": "nuros-personal-ai-os",
+  "version": "0.28.0",
+  "private": true,
+  "description": "NurOS personal AI operating system with local auth, API, AI Core, reminders, and storage adapters",
+  "scripts": {
+    "start": "node server.js",
+    "start:4174": "node server.js 4174",
+    "start:production": "set NUROS_DEPLOY_MODE=production&& node server.js",
+    "serve": "node server.js",
+    "test": "node tests/config-report.js && node tests/env-validation.js && node tests/static-smoke.js && node tests/api-smoke.js",
+    "test:api": "node tests/api-smoke.js",
+    "test:static": "node tests/static-smoke.js",
+    "test:config": "node tests/config-report.js",
+    "test:env": "node tests/env-validation.js",
+    "test:api:supabase": "set DATABASE_PROVIDER=supabase&& node tests/api-smoke.js",
+    "migrate:supabase": "node scripts/migrate-json-to-supabase.js",
+    "check:health": "node scripts/check-health.js",
+    "validate:env": "node scripts/validate-env.js",
+    "prepush:report": "node scripts/pre-push-report.js"
+  },
+  "keywords": [
+    "personal-ai-os",
+    "dashboard",
+    "pwa"
+  ],
+  "author": "",
+  "license": "UNLICENSED"
+}
