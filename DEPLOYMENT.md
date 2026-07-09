@@ -19,13 +19,14 @@ OPENAI_API_KEY=
 OPENAI_MODEL=gpt-4.1-mini
 ```
 
-Future hosted DB:
+Hosted production DB:
 
 ```text
 NUROS_DEPLOY_MODE=production
 DATABASE_PROVIDER=supabase
 SUPABASE_URL=
 SUPABASE_SERVICE_ROLE_KEY=
+NUROS_DEMO_USER_ENABLED=false
 ```
 
 ## Migrate Local JSON To Supabase
@@ -117,8 +118,8 @@ If `npm` is not available on the Windows machine:
 1. Create a Supabase project.
 2. Run `supabase-schema.sql`.
 3. Add Supabase env vars.
-4. Replace the JSON storage adapter with Supabase calls.
-5. Move sessions to Supabase Auth or hardened server-side sessions.
+4. Set `DATABASE_PROVIDER=supabase`.
+5. Run `.\run-supabase-tests.cmd` or `npm run test:api:supabase`.
 
 ## Web Hosting
 
@@ -126,8 +127,8 @@ Short path:
 
 1. Deploy this Node server to Render/Railway/Fly.io.
 2. Set env vars.
-3. Attach persistent disk for `.data` while still on JSON storage.
-4. Move to Supabase before real public use.
+3. Use Supabase storage for public use.
+4. Confirm `/api/health` returns `deploy.ready=true`.
 
 Long path:
 

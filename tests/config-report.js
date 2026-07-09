@@ -11,9 +11,13 @@ function report(overrides = {}) {
 }
 
 const originalMode = process.env.NUROS_DEPLOY_MODE;
+const originalAppUrl = process.env.APP_URL;
+const originalDemo = process.env.NUROS_DEMO_USER_ENABLED;
 
 try {
   process.env.NUROS_DEPLOY_MODE = "development";
+  delete process.env.APP_URL;
+  delete process.env.NUROS_DEMO_USER_ENABLED;
   const dev = report();
   assert.equal(dev.mode, "development");
   assert.equal(dev.ready, true);
@@ -27,7 +31,10 @@ try {
   assert.ok(unsafeProd.errors.some((item) => item.includes("DATABASE_PROVIDER")));
   assert.ok(unsafeProd.errors.some((item) => item.includes("EMAIL_PROVIDER")));
   assert.ok(unsafeProd.errors.some((item) => item.includes("AUTH_EXPOSE_DEV_TOKENS")));
+  assert.ok(unsafeProd.errors.some((item) => item.includes("APP_URL")));
 
+  process.env.APP_URL = "https://nuros.example.com";
+  process.env.NUROS_DEMO_USER_ENABLED = "false";
   const readyProd = report({
     storageHealth: { provider: "supabase" },
     mailerHealth: { provider: "resend", configured: true },
@@ -43,5 +50,15 @@ try {
     delete process.env.NUROS_DEPLOY_MODE;
   } else {
     process.env.NUROS_DEPLOY_MODE = originalMode;
+  }
+  if (originalAppUrl == null) {
+    delete process.env.APP_URL;
+  } else {
+    process.env.APP_URL = originalAppUrl;
+  }
+  if (originalDemo == null) {
+    delete process.env.NUROS_DEMO_USER_ENABLED;
+  } else {
+    process.env.NUROS_DEMO_USER_ENABLED = originalDemo;
   }
 }

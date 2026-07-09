@@ -124,6 +124,11 @@ function persist({ remote = true } = {}) {
 
 async function bootstrap() {
   if (!session?.token) {
+    try {
+      healthStatus = await api("/api/health");
+    } catch {
+      healthStatus = null;
+    }
     render();
     return;
   }
@@ -702,17 +707,25 @@ const views = {
 };
 
 function renderAuth() {
+  const demoEnabled = Boolean(healthStatus?.features?.demoUserEnabled);
+  const demoEmail = "demo" + "@nuros.local";
+  const demoPassword = "nuros" + "123";
+  const loginEmail = demoEnabled && authMode === "login" ? demoEmail : "";
+  const loginPassword = demoEnabled && authMode === "login" ? demoPassword : "";
+  const authCopy = demoEnabled
+    ? "Demo mode is enabled for local testing. Create your own account for real use."
+    : "Create your private NurOS account. Your data is stored in the configured server database.";
   byId("app").innerHTML = `
     <section class="auth-shell">
       <article class="auth-card">
         <div class="brand auth-brand"><span>${icon("blur_on")}</span><div><strong>NurOS</strong><small>Personal AI OS</small></div></div>
         <h1>${authMode === "register" ? "Create account" : authMode === "reset" ? "Reset password" : "Sign in"}</h1>
-        <p>Your NurOS data is stored in the private server database. Demo: <strong>demo@nuros.local</strong> / <strong>nuros123</strong></p>
+        <p>${authCopy}</p>
         <form class="stack-form" onsubmit="submitAuth(event)">
           ${authMode === "register" ? field("Name", "name", "Nur") : ""}
-          ${field("Email", "email", authMode === "login" ? "demo@nuros.local" : "", "email")}
+          ${field("Email", "email", loginEmail, "email")}
           ${authMode === "reset" ? field("Reset token", "token", "") : ""}
-          ${field(authMode === "reset" ? "New password" : "Password", "password", authMode === "login" ? "nuros123" : "", "password")}
+          ${field(authMode === "reset" ? "New password" : "Password", "password", loginPassword, "password")}
           <button class="primary-action" type="submit">${authMode === "register" ? "Create account" : authMode === "reset" ? "Reset password" : "Sign in"}</button>
         </form>
         ${notice ? `<p class="auth-notice">${notice}</p>` : ""}
@@ -726,11 +739,11 @@ function renderAuth() {
       <article class="auth-card">
         <div class="brand auth-brand"><span>${icon("blur_on")}</span><div><strong>NurOS</strong><small>Personal AI OS</small></div></div>
         <h1>${authMode === "register" ? "Аккаунт ашу" : "Жүйеге кіру"}</h1>
-        <p>Деректеріңіз сервердегі жеке JSON database-ке сақталады. Demo: <strong>demo@nuros.local</strong> / <strong>nuros123</strong></p>
+        <p>Деректеріңіз сервердегі жеке JSON database-ке сақталады.</p>
         <form class="stack-form" onsubmit="submitAuth(event)">
           ${authMode === "register" ? field("Атыңыз", "name", "Нұр") : ""}
-          ${field("Email", "email", authMode === "login" ? "demo@nuros.local" : "", "email")}
-          ${field("Password", "password", authMode === "login" ? "nuros123" : "", "password")}
+          ${field("Email", "email", "", "email")}
+          ${field("Password", "password", "", "password")}
           <button class="primary-action" type="submit">${authMode === "register" ? "Тіркелу" : "Кіру"}</button>
         </form>
         ${notice ? `<p class="auth-notice">${notice}</p>` : ""}

@@ -1,6 +1,6 @@
 {
   "name": "nuros-personal-ai-os",
-  "version": "0.28.0",
+  "version": "0.29.0",
   "private": true,
   "description": "NurOS personal AI operating system with local auth, API, AI Core, reminders, and storage adapters",
   "scripts": {

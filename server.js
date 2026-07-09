@@ -9,9 +9,9 @@ const { buildDeployReport } = require("./lib/config");
 const pkg = require("./package.json");
 
 const root = path.resolve(__dirname);
-const port = Number(process.argv[2] || process.env.PORT || 4173);
 
 loadEnvFile();
+const port = Number(process.argv[2] || process.env.PORT || 4173);
 
 const types = {
   ".html": "text/html; charset=utf-8",
@@ -91,6 +91,7 @@ const authRateLimitMax = Number(process.env.AUTH_RATE_LIMIT_MAX || 25);
 const sessionTtlDays = Number(process.env.SESSION_TTL_DAYS || 30);
 const tokenTtlMinutes = Number(process.env.AUTH_TOKEN_TTL_MINUTES || 30);
 const exposeDevTokens = process.env.AUTH_EXPOSE_DEV_TOKENS !== "false";
+const demoUserEnabled = process.env.NUROS_DEMO_USER_ENABLED === "true";
 
 function loadEnvFile() {
   const envPath = path.join(root, ".env");
@@ -475,6 +476,7 @@ async function handleApi(req, res, pathname) {
           emailProvider: mailerHealth.provider,
           emailConfigured: mailerHealth.configured,
           devTokensExposed: exposeDevTokens,
+          demoUserEnabled,
           supabaseReady: storageHealth.provider === "supabase",
           pwaReady: true
         },
@@ -759,6 +761,6 @@ const server = http.createServer((req, res) => {
 storage.init().then(() => {
   server.listen(port, () => {
     console.log(`NurOS running at http://localhost:${port}`);
-    console.log("Demo login: demo@nuros.local / nuros123");
+    if (demoUserEnabled) console.log("Demo login: demo@nuros.local / nuros123");
   });
 });

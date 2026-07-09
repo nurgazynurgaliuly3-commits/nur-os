@@ -14,17 +14,16 @@ Open:
 http://localhost:4173
 ```
 
-Demo account:
+Demo account is disabled by default. To enable it only for local testing, set:
 
 ```text
-demo@nuros.local
-nuros123
+NUROS_DEMO_USER_ENABLED=true
 ```
 
 ## What Is Implemented
 
 - Auth: register, login, logout, bearer token sessions.
-- Database: storage adapter with local JSON provider at `.data/nuros-db.json`.
+- Database: storage adapter with local JSON and hosted Supabase providers.
 - API: `/api/register`, `/api/login`, `/api/logout`, `/api/me`, `/api/state`, `/api/ai/chat`.
 - Account tools: `/api/health`, `/api/export`, `/api/backup`, `DELETE /api/account`.
 - Data portability: `/api/import` restores a sanitized NurOS export into the current account.
@@ -50,20 +49,16 @@ nuros123
 - Mobile QA: auth primary action and logout/theme controls remain usable on narrow screens.
 - Accessibility polish: icon-only navigation, topbar and AI command controls have accessible labels.
 
-## Product Limits
+## Production Status
 
-This is now a local full-stack product prototype, not a cloud production SaaS yet.
+NurOS is production-gated: `/api/health` and `scripts/validate-env.js` block public launch until Supabase, HTTPS `APP_URL`, real email delivery, hidden auth tokens, and disabled demo mode are configured.
 
-Still needed for public launch:
+Still recommended before a wide public launch:
 
-- Hosted PostgreSQL database.
-- Real email/password recovery.
 - OAuth with Google/Apple.
-- Real LLM provider integration.
 - Push notifications.
-- Automated tests.
-- Deployment to Vercel/Render/Railway/Supabase.
-- Production privacy/security review.
+- External uptime/error monitoring.
+- Formal privacy/security review.
 
 ## Architecture
 
@@ -78,7 +73,7 @@ Still needed for public launch:
 - `tests/api-smoke.js`: end-to-end API smoke test.
 - `tests/static-smoke.js`: static frontend and PWA asset smoke test.
 - `tests/config-report.js`: deploy readiness rules test.
-- `supabase-schema.sql`: hosted database schema draft.
+- `supabase-schema.sql`: hosted database schema.
 - `DEPLOYMENT.md`: local and hosted deployment plan.
 - `PRODUCTION_CHECKLIST.md`: launch readiness checklist.
 - `render.yaml`: Render hosting blueprint.

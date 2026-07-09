@@ -34,6 +34,7 @@ function validate(env) {
     requirePresent(env, "SUPABASE_URL", errors);
     requirePresent(env, "SUPABASE_SERVICE_ROLE_KEY", errors);
     requireValue(env, "AUTH_EXPOSE_DEV_TOKENS", "false", errors);
+    requireValue(env, "NUROS_DEMO_USER_ENABLED", "false", errors);
     requireValue(env, "EMAIL_PROVIDER", "resend", errors);
     requirePresent(env, "EMAIL_FROM", errors);
     requirePresent(env, "RESEND_API_KEY", errors);

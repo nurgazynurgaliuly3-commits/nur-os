@@ -52,7 +52,7 @@ check("package:private", packageJson.private === true, "package.json should rema
 check("package:test-script", Boolean(packageJson.scripts?.test), "package.json test script is missing");
 
 const checklist = read("PRODUCTION_CHECKLIST.md");
-for (const phrase of ["AUTH_EXPOSE_DEV_TOKENS=false", "DATABASE_PROVIDER=supabase", "EMAIL_PROVIDER=resend"]) {
+for (const phrase of ["AUTH_EXPOSE_DEV_TOKENS=false", "NUROS_DEMO_USER_ENABLED=false", "DATABASE_PROVIDER=supabase", "EMAIL_PROVIDER=resend"]) {
   check(`checklist:${phrase}`, checklist.includes(phrase), `Production checklist missing ${phrase}`);
 }
 

@@ -23,6 +23,7 @@ const badProd = runWith("NUROS_DEPLOY_MODE=production\nDATABASE_PROVIDER=json\nE
 assert.notEqual(badProd.code, 0);
 assert.ok(badProd.output.includes("DATABASE_PROVIDER must be supabase."));
 assert.ok(badProd.output.includes("APP_URL must be an HTTPS URL."));
+assert.ok(badProd.output.includes("NUROS_DEMO_USER_ENABLED must be false."));
 
 const goodProd = runWith(
   [
@@ -31,6 +32,7 @@ const goodProd = runWith(
     "SUPABASE_URL=https://example.supabase.co",
     "SUPABASE_SERVICE_ROLE_KEY=secret",
     "AUTH_EXPOSE_DEV_TOKENS=false",
+    "NUROS_DEMO_USER_ENABLED=false",
     "EMAIL_PROVIDER=resend",
     "EMAIL_FROM=NurOS <noreply@example.com>",
     "RESEND_API_KEY=secret",
