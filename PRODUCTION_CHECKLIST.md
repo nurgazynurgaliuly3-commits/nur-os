@@ -31,6 +31,9 @@ Open `/api/health` and confirm:
 }
 ```
 
+Open `/api/ready` and confirm it returns HTTP 200.
+Open `/api/live` and confirm it returns HTTP 200.
+
 ## Do Not Ship If
 
 - `deploy.errors` is not empty.

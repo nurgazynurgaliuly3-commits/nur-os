@@ -14,4 +14,5 @@ cd /d "%ROOT%"
 "%NODE_EXE%" tests\env-validation.js || exit /b 1
 "%NODE_EXE%" tests\static-smoke.js || exit /b 1
 "%NODE_EXE%" tests\api-smoke.js || exit /b 1
+"%NODE_EXE%" tests\production-gates.js || exit /b 1
 echo all-tests ok

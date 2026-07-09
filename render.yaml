@@ -5,7 +5,7 @@ services:
     plan: starter
     buildCommand: ""
     startCommand: node server.js
-    healthCheckPath: /api/health
+    healthCheckPath: /api/live
     envVars:
       - key: NUROS_DEPLOY_MODE
         value: production
@@ -19,8 +19,12 @@ services:
         sync: false
       - key: SUPABASE_SERVICE_ROLE_KEY
         sync: false
+      - key: NUROS_DEMO_USER_ENABLED
+        value: "false"
       - key: AUTH_EXPOSE_DEV_TOKENS
         value: "false"
+      - key: APP_URL
+        sync: false
       - key: EMAIL_PROVIDER
         value: resend
       - key: EMAIL_FROM

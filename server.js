@@ -463,6 +463,25 @@ async function handleApi(req, res, pathname) {
     const aiProvider = process.env.OPENAI_API_KEY ? "openai" : "local";
     const deploy = buildDeployReport({ storageHealth, mailerHealth, exposeDevTokens, aiProvider });
 
+    if (req.method === "GET" && pathname === "/api/live") {
+      return sendJson(res, 200, {
+        ok: true,
+        service: "NurOS",
+        version: pkg.version,
+        timestamp: now()
+      });
+    }
+
+    if (req.method === "GET" && pathname === "/api/ready") {
+      return sendJson(res, deploy.ready ? 200 : 503, {
+        ok: deploy.ready,
+        service: "NurOS",
+        version: pkg.version,
+        deploy,
+        timestamp: now()
+      });
+    }
+
     if (req.method === "GET" && pathname === "/api/health") {
       return sendJson(res, 200, {
         ok: true,

@@ -6,6 +6,9 @@ const root = path.resolve(__dirname, "..");
 
 const requiredFiles = [
   "server.js",
+  "Dockerfile",
+  ".dockerignore",
+  ".github/workflows/ci.yml",
   "app.js",
   "styles.css",
   "index.html",
@@ -15,11 +18,15 @@ const requiredFiles = [
   "supabase-schema.sql",
   "render.yaml",
   "PRODUCTION_CHECKLIST.md",
+  "SECURITY.md",
+  "PRIVACY.md",
   "run-tests.cmd",
   "validate-env.cmd",
   "migrate-supabase.cmd",
   "run-supabase-tests.cmd",
-  "check-health.cmd"
+  "check-health.cmd",
+  "scripts/check-live.js",
+  "tests/production-gates.js"
 ];
 
 const checks = [];

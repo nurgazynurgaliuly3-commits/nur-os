@@ -28,6 +28,7 @@ NUROS_DEMO_USER_ENABLED=true
 - Account tools: `/api/health`, `/api/export`, `/api/backup`, `DELETE /api/account`.
 - Data portability: `/api/import` restores a sanitized NurOS export into the current account.
 - Production diagnostics: `/api/health` exposes active providers and feature readiness.
+- Production probes: `/api/live` is a lightweight liveness check and `/api/ready` returns HTTP 503 until production gates pass.
 - Deploy readiness: `/api/health` reports mode, warnings and blocking production errors.
 - In-app diagnostics: Account screen shows active storage, email and deploy readiness status.
 - Reminder worker foundation: `/api/reminders`, `/api/reminders/due`, `/api/tick`.
@@ -73,9 +74,12 @@ Still recommended before a wide public launch:
 - `tests/api-smoke.js`: end-to-end API smoke test.
 - `tests/static-smoke.js`: static frontend and PWA asset smoke test.
 - `tests/config-report.js`: deploy readiness rules test.
+- `tests/production-gates.js`: production liveness/readiness gate smoke test.
 - `supabase-schema.sql`: hosted database schema.
 - `DEPLOYMENT.md`: local and hosted deployment plan.
 - `PRODUCTION_CHECKLIST.md`: launch readiness checklist.
+- `Dockerfile`: container runtime for Docker-compatible hosts.
+- `.github/workflows/ci.yml`: GitHub Actions CI for tests and pre-push report.
 - `render.yaml`: Render hosting blueprint.
 - `storage-adapter.md`: database adapter migration contract.
 
@@ -99,6 +103,13 @@ Hosted/Supabase helpers for this Windows workspace:
 .\migrate-supabase.cmd
 .\run-supabase-tests.cmd
 .\check-health.cmd http://localhost:4174/api/health
+```
+
+Docker-compatible hosts can use:
+
+```powershell
+docker build -t nuros .
+docker run --env-file .env -p 4174:4174 nuros
 ```
 
 Individual checks:

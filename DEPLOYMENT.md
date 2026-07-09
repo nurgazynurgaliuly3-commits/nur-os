@@ -91,6 +91,12 @@ node server.js
 
 Then open `/api/health` and confirm `deploy.ready` is `true` and `deploy.errors` is empty.
 
+Probe endpoints:
+
+- `/api/live`: liveness check for host health checks.
+- `/api/ready`: readiness check; returns HTTP 503 until production gates pass.
+- `/api/health`: full diagnostics payload.
+
 You can also run:
 
 ```powershell
@@ -98,6 +104,13 @@ You can also run:
 ```
 
 Render hosting can start from `render.yaml`. Use `PRODUCTION_CHECKLIST.md` before exposing the app publicly.
+
+Docker-compatible hosts can build the included image:
+
+```powershell
+docker build -t nuros .
+docker run --env-file .env -p 4174:4174 nuros
+```
 
 Run the local QA suite before deployment:
 
@@ -129,6 +142,14 @@ Short path:
 2. Set env vars.
 3. Use Supabase storage for public use.
 4. Confirm `/api/health` returns `deploy.ready=true`.
+
+## CI
+
+GitHub Actions runs on push and pull request via `.github/workflows/ci.yml`:
+
+1. `npm test`
+2. `npm run prepush:report`
+3. `npm run test:production-gates`
 
 Long path:
 
