@@ -1,4 +1,4 @@
-﻿const http = require("http");
+const http = require("http");
 const fs = require("fs");
 const fsp = require("fs/promises");
 const path = require("path");
@@ -23,7 +23,7 @@ const types = {
 
 const defaultState = {
   user: {
-    name: "РќТ±СЂ",
+    name: "Нұр",
     age: 24,
     height: 176,
     gender: "male",
@@ -39,21 +39,21 @@ const defaultState = {
     expenseToday: 11200,
     mandatoryPayments: 84000,
     history: [
-      { label: "Р–Р°Р»Р°Т›С‹", amount: 420000, type: "income" },
-      { label: "РџУ™С‚РµСЂ", amount: 65000, type: "expense" },
-      { label: "РўР°РјР°Т›", amount: 48000, type: "expense" },
-      { label: "РљУ©Р»С–Рє", amount: 18000, type: "expense" },
-      { label: "Р–РёРЅР°Т›", amount: 70000, type: "saving" }
+      { label: "Жалақы", amount: 420000, type: "income" },
+      { label: "Пәтер", amount: 65000, type: "expense" },
+      { label: "Тамақ", amount: 48000, type: "expense" },
+      { label: "Көлік", amount: 18000, type: "expense" },
+      { label: "Жинақ", amount: 70000, type: "saving" }
     ]
   },
   rituals: [
-    { id: "wake", title: "Р•СЂС‚Рµ С‚Т±СЂСѓ", done: true, streak: 12, target: "06:30" },
-    { id: "water", title: "РЎСѓ С–С€Сѓ", done: true, streak: 8, target: "2.5 Р»" },
-    { id: "prayer", title: "РќР°РјР°Р·", done: false, streak: 4, target: "5/5" },
-    { id: "plan", title: "Р–Т±РјС‹СЃ Р¶РѕСЃРїР°СЂС‹", done: true, streak: 15, target: "09:00" },
-    { id: "book", title: "РљС–С‚Р°Рї РѕТ›Сѓ", done: false, streak: 0, target: "20 Р±РµС‚" },
-    { id: "workout", title: "Р–Р°С‚С‚С‹Т“Сѓ", done: false, streak: 2, target: "18:00" },
-    { id: "sleep", title: "Т°Р№Т›С‹", done: true, streak: 6, target: "23:30" }
+    { id: "wake", title: "Ерте тұру", done: true, streak: 12, target: "06:30" },
+    { id: "water", title: "Су ішу", done: true, streak: 8, target: "2.5 л" },
+    { id: "prayer", title: "Намаз", done: false, streak: 4, target: "5/5" },
+    { id: "plan", title: "Жұмыс жоспары", done: true, streak: 15, target: "09:00" },
+    { id: "book", title: "Кітап оқу", done: false, streak: 0, target: "20 бет" },
+    { id: "workout", title: "Жаттығу", done: false, streak: 2, target: "18:00" },
+    { id: "sleep", title: "Ұйқы", done: true, streak: 6, target: "23:30" }
   ],
   fitness: {
     weight: 67.4,
@@ -61,20 +61,20 @@ const defaultState = {
     goal: "gain",
     experience: "beginner",
     daysPerWeek: 3,
-    injuries: "Р–РѕТ›",
+    injuries: "Жоқ",
     sleep: 7,
     water: 1.7,
-    supplements: "РљСЂРµР°С‚РёРЅ, РїСЂРѕС‚РµРёРЅ",
-    dietLimits: "Р–РѕТ›",
+    supplements: "Креатин, протеин",
+    dietLimits: "Жоқ",
     calories: 2860,
     missedWorkouts: 2,
     supplementTime: "20:30"
   },
-  reminders: ["19:00 - Р¶Р°С‚С‚С‹Т“СѓТ“Р° СЃУ©РјРєРµ РґР°Р№С‹РЅРґР°Сѓ", "21:30 - РµСЂС‚РµТЈРіС– Р¶РѕСЃРїР°СЂРґС‹ Р±РµРєС–С‚Сѓ"],
+  reminders: ["19:00 - жаттығуға сөмке дайындау", "21:30 - ертеңгі жоспарды бекіту"],
   chat: [
     {
       role: "ai",
-      text: "Р‘ТЇРіС–РЅ 5 РјРёРЅСѓС‚С‚С‹Т› СЂРµР¶РёРј: Т›Р°СЂР¶С‹ С‚Т±СЂР°Т›С‚С‹, Р±С–СЂР°Т› РєС–С‚Р°Рї РїРµРЅ Р¶Р°С‚С‚С‹Т“СѓРґС‹ Т›С‹СЃТ›Р° С„РѕСЂРјР°С‚С‚Р° Т›Р°Р№С‚Р°СЂТ“Р°РЅ РґТ±СЂС‹СЃ."
+      text: "Бүгін 5 минуттық режим: қаржы тұрақты, бірақ кітап пен жаттығуды қысқа форматта қайтарған дұрыс."
     }
   ]
 };
@@ -312,10 +312,10 @@ function buildCore(state) {
   const dayProgress = Math.round((ritualRate + Math.min(100, savingsProgress) + (state.fitness.missedWorkouts ? 55 : 85)) / 3);
   const insights = [];
 
-  if (freeCash < 70000) insights.push("Р•СЂРєС–РЅ С€С‹Т“С‹РЅРґС‹ Т›С‹СЃТ›Р°СЂС‚: С„РёС‚РЅРµСЃ С‚Р°РјР°Т“С‹РЅ Т›Р°СЂР°РїР°Р№С‹Рј, Р°Т›СѓС‹Р·Т“Р° Р±Р°Р№ СЂР°С†РёРѕРЅРјРµРЅ Р¶Р°Рї.");
-  if (state.fitness.missedWorkouts >= 2) insights.push("Р•РєС– Р¶Р°С‚С‚С‹Т“Сѓ У©С‚РєС–Р·С–Рї Р°Р»РґС‹ТЈ: Р±ТЇРіС–РЅ 35 РјРёРЅСѓС‚С‚С‹Т› Р¶РµТЈС–Р» full-body Р¶Р°СЃР°.");
-  if (state.rituals.some((ritual) => ritual.title === "РљС–С‚Р°Рї РѕТ›Сѓ" && !ritual.done)) insights.push("РљС–С‚Р°Рї РѕТ›Сѓ ТЇС€С–РЅ Р±ТЇРіС–РЅ 10 Р±РµС‚ Р¶РµС‚РєС–Р»С–РєС‚С–.");
-  if (savingsProgress < 40) insights.push("Р–РёРЅР°Т›Т›Р° Р°РІС‚РѕРјР°С‚С‚С‹ 15% Р±У©Р»Сѓ СЂРµР¶РёРјС–РЅ СЃР°Т›С‚Р°.");
+  if (freeCash < 70000) insights.push("Еркін шығынды қысқарт: фитнес тамағын қарапайым, ақуызға бай рационмен жап.");
+  if (state.fitness.missedWorkouts >= 2) insights.push("Екі жаттығу өткізіп алдың: бүгін 35 минуттық жеңіл full-body жаса.");
+  if (state.rituals.some((ritual) => ritual.title === "Кітап оқу" && !ritual.done)) insights.push("Кітап оқу үшін бүгін 10 бет жеткілікті.");
+  if (savingsProgress < 40) insights.push("Жинаққа автоматты 15% бөлу режимін сақта.");
 
   return {
     freeCash,
@@ -324,7 +324,7 @@ function buildCore(state) {
     ritualRate,
     financeScore,
     dayProgress,
-    advice: insights[0] || "Р–ТЇР№Рµ Р¶Р°Т›СЃС‹ Т›Р°Р»С‹РїС‚Р°: Р±ТЇРіС–РЅ РЅРµРіС–Р·РіС– Р¶РѕСЃРїР°СЂРґС‹ Р±Т±Р·Р±Р°Р№ РѕСЂС‹РЅРґР°.",
+    advice: insights[0] || "Жүйе жақсы қалыпта: бүгін негізгі жоспарды бұзбай орында.",
     insights
   };
 }
@@ -355,9 +355,9 @@ function buildAiPrompt(state, core, message) {
 function fallbackAiAnswer(state, core) {
   return [
     `NurOS Core: ${core.advice}`,
-    `ТљР°СЂР¶С‹: Р±РѕСЃ Т›Р°СЂР°Р¶Р°С‚ ${core.freeCash} KZT, С‚Р°РјР°Т› Р±СЋРґР¶РµС‚С– ${core.foodBudget} KZT.`,
-    `Р РёС‚СѓР°Р»: Р±ТЇРіС–РЅРіС– РѕСЂС‹РЅРґР°Р»Сѓ ${core.ritualRate}%.`,
-    `Р¤РёС‚РЅРµСЃ: РјР°Т›СЃР°С‚ ${state.fitness.goal}, Р°РїС‚Р°СЃС‹РЅР° ${state.fitness.daysPerWeek} РєТЇРЅ Р¶Р°С‚С‚С‹Т“Сѓ.`
+    `Қаржы: бос қаражат ${core.freeCash} KZT, тамақ бюджеті ${core.foodBudget} KZT.`,
+    `Ритуал: бүгінгі орындалу ${core.ritualRate}%.`,
+    `Фитнес: мақсат ${state.fitness.goal}, аптасына ${state.fitness.daysPerWeek} күн жаттығу.`
   ].join(" ");
 }
 
@@ -514,9 +514,9 @@ async function handleApi(req, res, pathname) {
       const body = await readBody(req);
       const email = String(body.email || "").trim().toLowerCase();
       const password = String(body.password || "");
-      const name = String(body.name || "РџР°Р№РґР°Р»Р°РЅСѓС€С‹").trim();
-      if (!email || password.length < 6) return sendJson(res, 400, { error: "Email Р¶У™РЅРµ РєРµРјС–РЅРґРµ 6 С‚Р°ТЈР±Р°Р»С‹ password РєРµСЂРµРє." });
-      if (db.users.some((user) => user.email === email)) return sendJson(res, 409, { error: "Р‘Т±Р» email С‚С–СЂРєРµР»РіРµРЅ." });
+      const name = String(body.name || "Пайдаланушы").trim();
+      if (!email || password.length < 6) return sendJson(res, 400, { error: "Email және кемінде 6 таңбалы password керек." });
+      if (db.users.some((user) => user.email === email)) return sendJson(res, 409, { error: "Бұл email тіркелген." });
 
       const verificationToken = createPlainToken();
       const user = {
@@ -606,7 +606,7 @@ async function handleApi(req, res, pathname) {
       const email = String(body.email || "").trim().toLowerCase();
       const password = String(body.password || "");
       const user = db.users.find((item) => item.email === email);
-      if (!user || !verifyPassword(password, user.passwordHash)) return sendJson(res, 401, { error: "Email РЅРµРјРµСЃРµ password Т›Р°С‚Рµ." });
+      if (!user || !verifyPassword(password, user.passwordHash)) return sendJson(res, 401, { error: "Email немесе password қате." });
       const token = crypto.randomBytes(32).toString("hex");
       db.sessions.push({ token, userId: user.id, createdAt: now() });
       db.states[user.id] ||= clone(defaultState);
