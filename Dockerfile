@@ -7,6 +7,7 @@ ENV PORT=4174
 
 COPY package.json ./
 COPY server.js app.js index.html styles.css manifest.webmanifest service-worker.js ./
+COPY assets ./assets
 COPY lib ./lib
 COPY scripts ./scripts
 COPY tests ./tests
