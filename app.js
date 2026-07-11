@@ -456,7 +456,7 @@ function renderDashboard(core) {
     </div>
     <section class="dashboard-grid">
       <article class="panel ai-panel"><div class="ai-watermark">${icon("auto_awesome")}</div><div><div class="panel-kicker">${icon("bolt")}AI кеңесі</div><h2>"${core.advice}"</h2></div></article>
-      <article class="panel progress-panel"><div class="progress-ring" style="--value:${core.dayProgress}"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40"></circle><circle cx="50" cy="50" r="40"></circle></svg><strong>${core.dayProgress}%</strong></div><h3>Күндік прогресс</h3><p>${state.rituals.filter((ritual) => ritual.done).length}/${state.rituals.length} ритуал</p></article>
+      <article class="panel progress-panel"><div class="progress-ring" style="--value:${core.dayProgress}"><svg viewBox="0 0 100 100"><defs><linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7c5cff" /><stop offset="52%" stop-color="#4f8dff" /><stop offset="100%" stop-color="#1fd1c4" /></linearGradient></defs><circle cx="50" cy="50" r="40"></circle><circle cx="50" cy="50" r="40"></circle></svg><strong>${core.dayProgress}%</strong></div><h3>Күндік прогресс</h3><p>${state.rituals.filter((ritual) => ritual.done).length}/${state.rituals.length} ритуал</p></article>
       <article class="panel finance-snapshot"><div class="panel-head"><h3>${icon("account_balance_wallet")}Қаржы</h3><span>Осы айда</span></div><div class="money-block"><span>Бос қаражат</span><strong>${formatKzt(core.freeCash)}</strong></div><div class="bar-chart"><span style="height:50%"></span><span style="height:74%"></span><span class="hot" style="height:100%"></span><span style="height:66%"></span><span style="height:50%"></span><span style="height:80%"></span><span class="blue" style="height:34%"></span></div></article>
       <article class="panel rituals-snapshot"><div class="panel-head"><h3>${icon("star")}Ритуалдар</h3></div>${state.rituals.slice(2, 5).map((ritual) => `<div class="ritual-line"><div><span>${ritual.title}</span><strong>${ritual.done ? "done" : ritual.target}</strong></div>${progress(ritual.done ? 100 : Math.min(80, ritual.streak * 12))}</div>`).join("")}</article>
       <article class="panel fitness-snapshot"><div class="panel-head"><h3>${icon("fitness_center")}Фитнес</h3></div><div class="workout-callout"><strong>${core.fitnessPlan.direction}</strong><span>${icon("local_fire_department", "mini")}${core.fitnessPlan.calories} kcal</span></div><button class="secondary-action" type="button" onclick="setView('fitness')">Жоспарды көру</button></article>
@@ -713,42 +713,39 @@ function renderAuth() {
   const loginEmail = demoEnabled && authMode === "login" ? demoEmail : "";
   const loginPassword = demoEnabled && authMode === "login" ? demoPassword : "";
   const authCopy = demoEnabled
-    ? "Demo mode is enabled for local testing. Create your own account for real use."
-    : "Create your private NurOS account. Your data is stored in the configured server database.";
+    ? "Demo режимі жергілікті тестілеу үшін қосулы. Нақты пайдалану үшін жеке аккаунт ашыңыз."
+    : "Жеке NurOS аккаунтыңызды ашыңыз. Деректеріңіз серверде қауіпсіз сақталады.";
+  const title = authMode === "register" ? "Аккаунт ашу" : authMode === "reset" ? "Құпиясөзді қалпына келтіру" : "Жүйеге кіру";
+  const submitLabel = authMode === "register" ? "Аккаунт ашу" : authMode === "reset" ? "Құпиясөзді жаңарту" : "Кіру";
+  const features = [
+    ["account_balance_wallet", "Қаржы", "Табыс, шығыс және жинақты бір жерден бақыла"],
+    ["self_improvement", "Ритуал", "Күнделікті әдеттерді streak-пен қада"],
+    ["fitness_center", "Фитнес", "Жеке калория және жаттығу жоспары"],
+    ["smart_toy", "AI Chat", "Барлық контекст негізінде ақылды кеңес"]
+  ];
   byId("app").innerHTML = `
     <section class="auth-shell">
-      <article class="auth-card">
-        <div class="brand auth-brand"><span>${icon("blur_on")}</span><div><strong>NurOS</strong><small>Personal AI OS</small></div></div>
-        <h1>${authMode === "register" ? "Create account" : authMode === "reset" ? "Reset password" : "Sign in"}</h1>
-        <p>${authCopy}</p>
-        <form class="stack-form" onsubmit="submitAuth(event)">
-          ${authMode === "register" ? field("Name", "name", "Nur") : ""}
-          ${field("Email", "email", loginEmail, "email")}
-          ${authMode === "reset" ? field("Reset token", "token", "") : ""}
-          ${field(authMode === "reset" ? "New password" : "Password", "password", loginPassword, "password")}
-          <button class="primary-action" type="submit">${authMode === "register" ? "Create account" : authMode === "reset" ? "Reset password" : "Sign in"}</button>
-        </form>
-        ${notice ? `<p class="auth-notice">${notice}</p>` : ""}
-        <button class="link-button" onclick="setAuthMode('${authMode === "register" ? "login" : "register"}')">${authMode === "register" ? "I have an account" : "Create new account"}</button>
-        <button class="link-button" onclick="setAuthMode('${authMode === "reset" ? "login" : "reset"}')">${authMode === "reset" ? "Back to login" : "Forgot password"}</button>
-      </article>
-    </section>`;
-  return;
-  byId("app").innerHTML = `
-    <section class="auth-shell">
-      <article class="auth-card">
-        <div class="brand auth-brand"><span>${icon("blur_on")}</span><div><strong>NurOS</strong><small>Personal AI OS</small></div></div>
-        <h1>${authMode === "register" ? "Аккаунт ашу" : "Жүйеге кіру"}</h1>
-        <p>Деректеріңіз сервердегі жеке JSON database-ке сақталады.</p>
-        <form class="stack-form" onsubmit="submitAuth(event)">
-          ${authMode === "register" ? field("Атыңыз", "name", "Нұр") : ""}
-          ${field("Email", "email", "", "email")}
-          ${field("Password", "password", "", "password")}
-          <button class="primary-action" type="submit">${authMode === "register" ? "Тіркелу" : "Кіру"}</button>
-        </form>
-        ${notice ? `<p class="auth-notice">${notice}</p>` : ""}
-        <button class="link-button" onclick="setAuthMode('${authMode === "register" ? "login" : "register"}')">${authMode === "register" ? "Аккаунтым бар" : "Жаңа аккаунт ашу"}</button>
-      </article>
+      <div class="auth-frame">
+        <aside class="auth-visual">
+          <div class="auth-visual-brand"><span>${icon("blur_on")}</span><div><strong>NurOS</strong><small>PERSONAL AI OS</small></div></div>
+          <h2>Қаржы, ритуал және фитнесіңізді бір AI жүйеде біріктіріңіз.</h2>
+          <ul>${features.map(([iconName, title2, desc]) => `<li>${icon(iconName)}<span><strong style="display:block;font-size:14px;">${title2}</strong><span style="opacity:.85;font-weight:500;">${desc}</span></span></li>`).join("")}</ul>
+        </aside>
+        <article class="auth-card">
+          <h1>${title}</h1>
+          <p>${authCopy}</p>
+          <form class="stack-form" onsubmit="submitAuth(event)">
+            ${authMode === "register" ? field("Атыңыз", "name", "Нұр") : ""}
+            ${field("Email", "email", loginEmail, "email")}
+            ${authMode === "reset" ? field("Токен", "token", "") : ""}
+            ${field(authMode === "reset" ? "Жаңа құпиясөз" : "Құпиясөз", "password", loginPassword, "password")}
+            <button class="primary-action" type="submit">${submitLabel}</button>
+          </form>
+          ${notice ? `<p class="auth-notice">${notice}</p>` : ""}
+          <button class="link-button" onclick="setAuthMode('${authMode === "register" ? "login" : "register"}')">${authMode === "register" ? "Аккаунтым бар" : "Жаңа аккаунт ашу"}</button>
+          <button class="link-button" onclick="setAuthMode('${authMode === "reset" ? "login" : "reset"}')">${authMode === "reset" ? "Кіру бетіне оралу" : "Құпиясөзді ұмыттыңыз ба?"}</button>
+        </article>
+      </div>
     </section>`;
 }
 
